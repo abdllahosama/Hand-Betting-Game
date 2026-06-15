@@ -151,7 +151,7 @@ hand-betting-game/
 │  │  ├─ GameOver.tsx                   # End-of-game score summary
 │  │  └─ Leaderboard.tsx                # Top-5 high scores
 │  │
-│  ├─ index.css                        # Tailwind entry + custom layers
+│  ├─ index.css                        # Tailwind v4 entry (@import) + @theme tokens
 │  ├─ App.tsx                          # Root component / screen routing
 │  └─ main.tsx                         # App entry point
 │
@@ -160,10 +160,8 @@ hand-betting-game/
 │
 ├─ index.html                         # Vite HTML entry
 ├─ package.json
-├─ tsconfig.json
-├─ vite.config.ts                     # Vite + React plugin
-├─ tailwind.config.ts                 # Theme tokens (colors, tiles, easing)
-├─ postcss.config.js                  # Tailwind/Autoprefixer pipeline
+├─ tsconfig.json                      # TypeScript config (strict)
+├─ vite.config.ts                     # Vite + React + Tailwind plugins, Vitest setup
 └─ README.md
 ```
 
@@ -285,8 +283,8 @@ The design anticipates extension along these seams:
 **Frontend**
 - **React 18 + TypeScript** — typed components; binds to the pure engine.
 - **Vite** — fast dev server, HMR, zero-config TypeScript.
-- **Tailwind CSS** — utility-first styling with a custom theme (design tokens in
-  `tailwind.config`) for consistent spacing, colors, and the tile look.
+- **Tailwind CSS (v4)** — utility-first styling with a custom theme (design tokens
+  via `@theme` in `index.css`) for consistent spacing, colors, and the tile look.
 - **Framer Motion** — smooth, declarative transitions (tile deals, flips, value
   changes) for polish.
 

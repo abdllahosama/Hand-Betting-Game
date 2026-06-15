@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens (Tailwind v4 CSS-first config).
+ * These are placeholders; the full theme (tile colors, easing, shadows) is
+ * expanded as the UI is built.
+ */
+@theme {
+  --color-felt: #0b6b3a;
+  --color-felt-dark: #084d2a;
+  --radius-tile: 0.75rem;
+  --ease-tile: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
