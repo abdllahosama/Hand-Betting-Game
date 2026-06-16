@@ -1,14 +1,23 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens (Tailwind v4 CSS-first config).
- * These are placeholders; the full theme (tile colors, easing, shadows) is
- * expanded as the UI is built.
+ * Design tokens (Tailwind v4 CSS-first config). Each `--color-*` token becomes a
+ * utility automatically (e.g. `bg-felt-800`, `text-gold`).
  */
 @theme {
-  --color-felt: #0b6b3a;
-  --color-felt-dark: #084d2a;
-  --radius-tile: 0.75rem;
+  --color-felt-700: #0f5132;
+  --color-felt-800: #0a3d28;
+  --color-felt-900: #052016;
+
+  --color-gold: #e7c14c;
+  --color-gold-soft: #f3dd9a;
+
+  --color-tile: #f8f5ec;
+  --color-tile-edge: #cfc8b6;
+
+  --color-win: #2fb46b;
+  --color-lose: #e0563f;
+
   --ease-tile: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -16,4 +25,27 @@ html,
 body,
 #root {
   height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Felt-table backdrop used by the app shell. */
+.felt-bg {
+  background: radial-gradient(circle at 50% -10%, var(--color-felt-700), var(--color-felt-900) 70%);
+}
+
+/* Mahjong glyphs need a symbol-capable font and tight line-height. */
+.tile-glyph {
+  line-height: 1;
+  font-family: 'Apple Symbols', 'Segoe UI Symbol', 'Noto Sans Symbols 2', sans-serif;
 }
