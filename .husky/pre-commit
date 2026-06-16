@@ -4,3 +4,6 @@ npx lint-staged
 # Type-check the whole project — catches cross-file type errors that
 # per-file linting can't see. Blocks the commit on any type error.
 npm run typecheck
+
+# Run the full test suite — blocks the commit if any test fails.
+npm test

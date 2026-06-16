@@ -189,17 +189,22 @@ carries a **value policy**. Whether a tile's value can change is therefore
 
 ```ts
 type ValuePolicy =
-  | { kind: 'static' }                              // value = base, never changes
-  | { kind: 'dynamic'; min: number; max: number };  // drifts ±1, bounded (game-over at min/max)
+  | { kind: 'static' }                                          // value never changes
+  | { kind: 'dynamic'; base: number; min: number; max: number }; // starts at base, drifts ±1, bounded (game-over at min/max)
 ```
+
+A dynamic policy is **self-contained** — it carries its own starting `base`
+alongside its bounds, so a tile type's full value behaviour lives in one place
+(and is configurable per kind, e.g. Dragons and Winds could start differently).
+Number tiles are `static` and use their intrinsic face value (rank).
 
 **Default policies (match the spec exactly):**
 
-| Tile type | Base value | Policy |
-|---|---|---|
-| Number (1–9) | face value | `static` |
-| Dragon | 5 | `dynamic` (min 0, max 10) |
-| Wind | 5 | `dynamic` (min 0, max 10) |
+| Tile type | Policy |
+|---|---|
+| Number (1–9) | `static` (value = face value) |
+| Dragon | `dynamic` (base 5, min 0, max 10) |
+| Wind | `dynamic` (base 5, min 0, max 10) |
 
 A single `tileValue(typeId, state)` function resolves any tile's value, and the
 win/loss scaling step only asks *"is this type's policy dynamic?"* — it no longer
