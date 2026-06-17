@@ -171,8 +171,9 @@ export function createGame(rng: Rng, config: GameConfig = DEFAULT_CONFIG): GameS
 }
 
 /**
- * Resolve a bet: reveal the next hand, compare totals, scale the revealed hand's
- * dynamic tiles, update score/streak, archive the old hand, and check game over.
+ * Resolve a bet: reveal the next hand, compare totals, scale the configured
+ * hand's dynamic tiles (config.scalingTarget), update score/streak, archive the
+ * old hand, and check game over.
  */
 export function placeBet(state: GameState, bet: Bet, rng: Rng): GameState {
   if (state.phase !== 'betting') {
@@ -211,13 +212,15 @@ export function placeBet(state: GameState, bet: Bet, rng: Rng): GameState {
   const won = bet === 'higher' ? newTotal > prevTotal : newTotal < prevTotal;
   const result: RoundResult = push ? 'push' : won ? 'win' : 'loss';
 
-  // 3. Scale the revealed hand's dynamic tiles, once per type (D4).
+  // 3. Scale the configured hand's dynamic tiles, once per type (D3/D4).
+  //    'bet-from' scales the hand you bet from; 'revealed' scales the new hand.
+  const scaledHand = config.scalingTarget === 'revealed' ? nextHand : state.currentHand;
   const values: ValueMap = { ...state.values };
   const changedTypeIds: TileTypeId[] = [];
   if (!push) {
     const delta = won ? 1 : -1;
     const dynamicIds = new Set<TileTypeId>();
-    for (const tile of nextHand) {
+    for (const tile of scaledHand) {
       if (isDynamic(tile.typeId, config)) {
         dynamicIds.add(tile.typeId);
       }

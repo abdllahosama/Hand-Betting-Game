@@ -5,6 +5,13 @@
  */
 import type { TileKind, ValuePolicy } from './tiles';
 
+/**
+ * Which hand's dynamic tiles change value when a bet resolves (D3):
+ * - `bet-from`: the hand you bet from wins/loses, then retires to history.
+ * - `revealed`: the newly revealed hand is the winning/losing hand.
+ */
+export type ScalingTarget = 'bet-from' | 'revealed';
+
 export interface GameConfig {
   /** Tiles per hand (D1). */
   readonly handSize: number;
@@ -16,6 +23,8 @@ export interface GameConfig {
   readonly scoreBase: number;
   /** When true, a tie resolves as a loss; when false, as a no-op "push" (D5). */
   readonly tieIsLoss: boolean;
+  /** Which hand's dynamic tiles scale on a resolved bet (D3). */
+  readonly scalingTarget: ScalingTarget;
   /**
    * Value policy per tile kind — the single seam for making tiles dynamic or
    * static (D11). A dynamic policy carries its own `base` plus the `min`/`max`
@@ -30,6 +39,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   maxDrawDepletions: 3,
   scoreBase: 10,
   tieIsLoss: true,
+  scalingTarget: 'bet-from',
   valuePolicies: {
     number: { kind: 'static' },
     dragon: { kind: 'dynamic', base: 5, min: 0, max: 10 },

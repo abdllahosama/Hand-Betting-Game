@@ -65,7 +65,7 @@ describe('createGame', () => {
 });
 
 describe('placeBet', () => {
-  it("scales exactly the revealed hand's dynamic tiles by ±1, once per type", () => {
+  it('scales the hand you bet from by ±1, once per type (default)', () => {
     const rng = seededRng(42);
     const before = createGame(rng);
     const after = placeBet(before, 'higher', rng);
@@ -75,17 +75,32 @@ describe('placeBet', () => {
     expect(outcome.result === 'win' || outcome.result === 'loss').toBe(true);
     const delta = outcome.result === 'win' ? 1 : -1;
 
-    const handDynamic = new Set(
-      after.currentHand.filter((t) => isDynamic(t.typeId, DEFAULT_CONFIG)).map((t) => t.typeId),
+    // Default scalingTarget is 'bet-from' → the hand we bet from is before.currentHand.
+    const scaled = new Set(
+      before.currentHand.filter((t) => isDynamic(t.typeId, DEFAULT_CONFIG)).map((t) => t.typeId),
     );
 
     for (const typeId of Object.keys(before.values)) {
-      const expected = handDynamic.has(typeId)
-        ? before.values[typeId] + delta
-        : before.values[typeId];
+      const expected = scaled.has(typeId) ? before.values[typeId] + delta : before.values[typeId];
       expect(after.values[typeId]).toBe(expected);
     }
-    expect([...handDynamic].sort()).toEqual([...outcome.changedTypeIds].sort());
+    expect([...scaled].sort()).toEqual([...outcome.changedTypeIds].sort());
+  });
+
+  it("scales the revealed hand instead when scalingTarget is 'revealed'", () => {
+    const config: GameConfig = { ...DEFAULT_CONFIG, scalingTarget: 'revealed' };
+    const rng = seededRng(42);
+    const before = createGame(rng, config);
+    const after = placeBet(before, 'higher', rng);
+
+    const outcome = after.lastOutcome;
+    if (outcome === undefined) throw new Error('expected an outcome');
+
+    // 'revealed' scales the new hand, which is now after.currentHand.
+    const revealedDynamic = new Set(
+      after.currentHand.filter((t) => isDynamic(t.typeId, config)).map((t) => t.typeId),
+    );
+    expect([...revealedDynamic].sort()).toEqual([...outcome.changedTypeIds].sort());
   });
 
   it('advances the round, records history, and conserves the tile count', () => {

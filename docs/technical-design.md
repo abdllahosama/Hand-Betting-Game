@@ -38,9 +38,13 @@ Standard Mahjong set — **34 distinct types**, **4 copies each = 136 tiles**:
 - **Dragons & Winds:** start at **5**, and change dynamically (see below).
 
 ### 2.3 Dynamic scaling
-When a hand is revealed and the bet is resolved:
-- If it was a **winning** hand → every special tile in it **+1**.
-- If it was a **losing** hand → every special tile in it **−1**.
+When a bet resolves, the special tiles of the **hand you bet from** scale (this is
+the default `config.scalingTarget`; see D3):
+- If the bet was **correct** (a winning hand) → every special tile in it **+1**.
+- If the bet was **wrong** (a losing hand) → every special tile in it **−1**.
+
+That hand then retires to history and the discard pile, and the revealed hand
+becomes the new current hand.
 
 ### 2.4 A "hand"
 A hand is **3 tiles** (configurable). Its **total** is the sum of its tile values.
@@ -73,7 +77,7 @@ chosen to be **defensible and easy to change** (most are config flags).
 |---|---|---|---|
 | D1 | How many tiles per hand? | **3**, via `config.handSize` | "Total value" implies multiple tiles; configurable shows feature-readiness. |
 | D2 | Is value "per tile type" or "per physical copy"? | **Per type** — all copies of a tile share one value | Cleaner economy; makes the 0/10 game-over meaningful; matches "specific to that tile." |
-| D3 | Which hand scales on win/loss? | The **newly revealed** hand | It is the hand the bet resolves against. |
+| D3 | Which hand scales on win/loss? | **The hand you bet from** (default), via `config.scalingTarget` (`'bet-from'` \| `'revealed'`) | The hand you hold wins/loses, then retires — a clean narrative. Configurable so the alternative reading (the revealed hand scales) is a one-line change. |
 | D4 | A special tile appears twice in one hand — scale once or twice? | **Once per type per hand** | Value is per-type; avoids surprising double jumps. |
 | D5 | Tie (next total == current total)? | **Counts as a loss** (`config.tieIsLoss`) | Keeps the value economy moving; switchable to a "push" via config. |
 | D6 | What value does the *current* hand show after a reveal? | The **post-scaling** value | The displayed total must reflect live values used by the next bet. |
@@ -227,7 +231,7 @@ flowchart TD
     Reveal --> Depleted{Draw pile depleted<br/>for the 3rd time?}
     Depleted -- Yes --> Over([Game Over → Score summary])
     Depleted -- No --> Resolve[Compare totals<br/>tie counts as a loss]
-    Resolve --> Scale[Scale revealed hand's special<br/>tiles ±1 · once per type]
+    Resolve --> Scale[Scale the hand you bet from:<br/>special tiles ±1 · once per type]
     Scale --> Score[Update streak & score]
     Score --> Archive[Old hand → discard + history<br/>revealed hand → current hand]
     Archive --> Limit{Any tile value<br/>reached 0 or 10?}
@@ -246,7 +250,7 @@ flowchart TD
 2. **Bet:** player picks Higher or Lower.
 3. **Reveal:** draw the next hand (reshuffling if needed).
 4. **Resolve:** compare totals → win/loss (tie = loss).
-5. **Scale:** apply ±1 to the revealed hand's **dynamic** tiles (Dragons/Winds by default), once per type.
+5. **Scale:** apply ±1 to the **dynamic** tiles of the hand you bet from (Dragons/Winds by default; configurable via `scalingTarget`), once per type.
 6. **Score:** update streak and score.
 7. **Archive:** old hand → discard pile + history strip; revealed hand becomes current.
 8. **Check game over:** any value at 0/10, or 3rd depletion.
