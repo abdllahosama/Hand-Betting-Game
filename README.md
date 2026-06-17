@@ -119,6 +119,31 @@ docs/
 
 ---
 
+## Deployment
+
+The app is a static SPA, served via a multi-stage Docker image (Node builds it,
+Nginx serves it with history-API fallback and asset caching).
+
+### Test the production image locally
+```bash
+docker compose up --build      # → http://localhost:8080
+```
+
+### Deploy to Coolify
+1. **New Resource → Application**, connect this Git repository.
+2. **Build Pack: `Dockerfile`** (Coolify auto-detects the root `Dockerfile`).
+   _Alternatively, use the **Docker Compose** build pack with the included `docker-compose.yml`._
+3. Set the exposed **port to `80`**.
+4. Set your domain and **Deploy**.
+
+No environment variables or backend are required — scores persist in the browser via
+`localStorage`. SPA routing and static-asset caching are handled by [`nginx.conf`](nginx.conf).
+
+Relevant files: [`Dockerfile`](Dockerfile), [`nginx.conf`](nginx.conf),
+[`.dockerignore`](.dockerignore), [`docker-compose.yml`](docker-compose.yml).
+
+---
+
 ## Design notes
 
 Some rules were left open by the brief and resolved with documented, configurable

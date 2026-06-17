@@ -1,0 +1,14 @@
+# Optional: build and run the production image locally to verify the Docker setup
+# before deploying to Coolify.
+#
+#   docker compose up --build      → http://localhost:8080
+#
+# Coolify can also consume this file directly (Docker Compose build pack).
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:80'
+    restart: unless-stopped
